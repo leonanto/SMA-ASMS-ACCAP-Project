@@ -23,9 +23,9 @@ public class SAGE_API_Connector {
 	}
 	
 	//Customers Table 
-	public static boolean getCustomers(Program program1, String field)
+	public static boolean getCustomers(Program program, String field)
 	{ 
-		View customer = new View(program1, "AR0024");
+		View customer = new View(program, "AR0024");
 		customer.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (customer.goNext()) {
 			System.out.println(customer.get(field).toString() + "\n");
