@@ -9,9 +9,10 @@ public class Invoices {
 	public static boolean getInvoices(Program program){
 		View invoices = new View(program, "AR0032");
 		int count = 0;
-		invoices.filterSelect("", true, 1, View.FilterOrigin.FromStart);
+		//invoices.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoices.goNext()) {
-			System.out.println(invoices.get("IDTRX").toString() + "\n");
+			System.out.println(invoices.get("CNTBTCH")+ " " + invoices.get("CNTITEM") +
+					" " + invoices.get("IDCUST") +" " + invoices.get("IDINVC") + "\n");
 			count++;
 		}
 		System.out.println(count);

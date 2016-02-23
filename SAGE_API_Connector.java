@@ -22,8 +22,9 @@ public class SAGE_API_Connector {
 		
 		Program program;
 		program = new Program(session, "XZ", "XZ0001", "01A");	
-		//System.out.print(Customers.getCustomers(program, "IDCUST"));
+		//System.out.print(Customers.searchCustomers(program, "00319-L"));
 		System.out.print(Invoices.getInvoices(program));
+		//System.out.print(InvoiceDetails.getInvoiceDetails(program));
 	}
 	
 }
