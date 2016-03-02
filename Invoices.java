@@ -11,6 +11,7 @@ public class Invoices {
 		int count = 0;
 		//invoices.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoices.goNext()) {
+			//returns customer id, batch number, 
 			return(System.out.println(invoices.get("CNTBTCH")+ " " + invoices.get("CNTITEM") +
 					" " + invoices.get("IDCUST") +" " + invoices.get("IDINVC") + "\n"));
 			count++;
@@ -19,7 +20,7 @@ public class Invoices {
 		return ("");
 	}
 
-	public String getRecordsInvoice(Program program, String batch)
+	public String getKeysInvoice(Program program, String batch)
 	{
 		View invoices = new View(program, "AR0032");
 		int count = 0;
@@ -32,6 +33,20 @@ public class Invoices {
 		System.out.println(count);
 		return ("");
 	}
+
+	public View getFRecordsInvoice(Program program, String batch)
+	{
+		View invoices = new View(program, "AR0032");
+		int count = 0;
+		//invoices.filterSelect("", true, 1, View.FilterOrigin.FromStart);
+		while (invoices.goNext()) { 
+			if(invoices.get("CNTBTCH").equals(batch)){
+				return(invoices.getVeiwFields());
+			}
+		}
+		System.out.println(count);
+		return ("");
 	}
+
 }
 
