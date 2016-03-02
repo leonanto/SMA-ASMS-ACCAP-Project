@@ -54,5 +54,18 @@ public class Invoices {
 		return def;
 	}
 
+	public static void insertInvoices(Program program, String value[])
+	{
+		View invoices = new View(program, "AR0024");
+		invoices.filterSelect("", true, 1, View.FilterOrigin.FromStart);
+		while (invoices.goNext()) {
+			if(invoices.get("IDCUST").equals(id)){
+				invoices.set(, value[0]);
+				invoices.set(, value[1]);
+				invoices.set(, value[2]);
+			}
+		}
+	}
+
 }
 
