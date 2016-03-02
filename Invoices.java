@@ -1,26 +1,31 @@
 package asms_accpac_intergrator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sage.accpac.sm.Program;
 import com.sage.accpac.sm.View;
+import com.sage.accpac.sm.view.IViewFields;
 
 public class Invoices {
 
 	//Invoices Table
-	public static String getInvoices(Program program){
+	public static List<String> getInvoices(Program program){
+		List<String> invoiceList = new ArrayList<String>();
 		View invoices = new View(program, "AR0032");
 		int count = 0;
 		//invoices.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoices.goNext()) {
-			//returns customer id, batch number, 
-			return(System.out.println(invoices.get("CNTBTCH")+ " " + invoices.get("CNTITEM") +
-					" " + invoices.get("IDCUST") +" " + invoices.get("IDINVC") + "\n"));
+			//returns customer id, batch number,
 			count++;
+			invoiceList.add(invoices.get("CNTBTCH")+ " " + invoices.get("CNTITEM") +
+					" " + invoices.get("IDCUST") +" " + invoices.get("IDINVC") + "\n");
 		}
 		System.out.println(count);
-		return ("");
+		return invoiceList;
 	}
 
-	public String getKeysInvoice(Program program, String batch)
+	public String[] getKeysInvoice(Program program, String batch)
 	{
 		View invoices = new View(program, "AR0032");
 		int count = 0;
@@ -31,21 +36,22 @@ public class Invoices {
 			}
 		}
 		System.out.println(count);
-		return ("");
+		return null;
 	}
 
-	public View getFRecordsInvoice(Program program, String batch)
+	public static IViewFields getRecordsInvoice(Program program/*, String batch*/)
 	{
+		IViewFields def = null;
 		View invoices = new View(program, "AR0032");
 		int count = 0;
 		//invoices.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoices.goNext()) { 
-			if(invoices.get("CNTBTCH").equals(batch)){
-				return(invoices.getVeiwFields());
-			}
+			//if(invoices.get("CNTBTCH").equals(batch)){
+				return(invoices.getViewFields());
+			//}
 		}
 		System.out.println(count);
-		return ("");
+		return def;
 	}
 
 }
