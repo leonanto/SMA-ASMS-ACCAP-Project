@@ -30,6 +30,9 @@ public class Customers {
 		}
 		return true;	
 	}
-	
-	
+
+	public static String insertCustomer(Program program)
+	{
+		View customer =
+	}
 }
