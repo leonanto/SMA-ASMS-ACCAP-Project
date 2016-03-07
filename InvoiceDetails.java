@@ -11,8 +11,8 @@ public class InvoiceDetails {
 		int count = 0;
 		invoiceD.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoiceD.goNext()) {
-			return(System.out.println(invoiceD.getDefiningKeyValues() + "\n"));
 			count++;
+			return(invoiceD.getDefiningKeyValues() + "\n");
 		}
 		System.out.println(count);
 		return null;

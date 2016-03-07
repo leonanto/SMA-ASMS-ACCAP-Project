@@ -38,8 +38,9 @@ public class Invoices {
 		return invoiceList;
 	}
 
-	public String[] getKeysInvoice(Program program, String batch)
+	public static String getKeysInvoice(Program program, String batch)
 	{
+		List<String> invoiceList = new ArrayList<String>();
 		View invoiceB = new View(program, "AR0031");
 		View invoice = new View(program, "AR0032");
 		View invoiceD = new View(program, "AR0033");
@@ -52,10 +53,11 @@ public class Invoices {
 		invoicePS.compose(invoice);
 		invoiceOF.compose(invoice);
 		int count = 0;
-		//invoices.filterSelect("", true, 1, View.FilterOrigin.FromStart);
+		invoice.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoice.goNext()){ 
 			if(invoice.get("CNTBTCH").equals(batch)){
-				return(invoice.getDefiningKeyValues());
+				System.out.println(invoice.getDefiningKeyValues());
+				count++;
 			}
 		}
 		System.out.println(count);
@@ -86,7 +88,7 @@ public class Invoices {
 		return def;
 	}
 
-	public static void insertInvoices(Program program, String id, int value)
+	public static void insertInvoices(Program program, String id, String value)
 	{
 		View invoiceB = new View(program, "AR0031");
 		View invoice = new View(program, "AR0032");
@@ -106,12 +108,16 @@ public class Invoices {
 		while (customer.goNext()) {
 			if(customer.get("IDCUST").equals(id)){
 				try{
+					//invoiceB.recordClear();
+					invoiceB.recordGenerate(RecordGenerateMode.Insert);
 					//invoice.recordClear();
-					//invoice.recordGenerate(RecordGenerateMode.NoInsert);
+					invoice.recordGenerate(RecordGenerateMode.DelayKey);
 					invoice.set("IDINVC", value);
 					//invoice.set("IDCUST", id);
-					invoice.process();
-					invoice.insert();
+					//invoice.process();
+					///invoiceB.process();
+					//invoice.insert();
+					invoiceB.insert();
 					System.out.println(invoice.get("CNTBTCH") + " " + invoice.get("IDINVC") + " " + 
 					invoice.get("DATEINVC") + " " + invoice.get("DATEASOF") + " " +
 					invoice.get("IDCUST") + " " + invoice.get("NAMECUST") + " " + 
