@@ -29,12 +29,17 @@ public class Invoices {
 		invoice.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoice.goNext()) {
 			//returns customer id, batch number,
-			invoiceList.add(invoice.get("CNTBTCH")+ " " + invoice.get("CNTITEM") +
+			invoiceList.add(invoice.get("CNTBTCH")+ " " + invoice.get("CNTITEM") + " " + invoice.get("CODECURN") +
 					" " + invoice.get("IDCUST") +" " + invoice.get("IDINVC") + "\n");
 			count++;
 		}
 		System.out.println(count);
 		invoice.dispose();
+		invoiceB.dispose();
+		invoiceD.dispose();
+		invoicePS.dispose();
+		invoiceOF.dispose();
+		invoiceDOF.dispose();
 		return invoiceList;
 	}
 
@@ -107,34 +112,36 @@ public class Invoices {
 		customer.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (customer.goNext()) {
 			if(customer.get("IDCUST").equals(id)){
-				try{
-					//invoiceB.recordClear();
-					invoiceB.recordGenerate(RecordGenerateMode.Insert);
-					//invoice.recordClear();
-					invoice.recordGenerate(RecordGenerateMode.DelayKey);
-					invoice.set("IDINVC", value);
-					//invoice.set("IDCUST", id);
-					//invoice.process();
-					///invoiceB.process();
-					//invoice.insert();
-					invoiceB.insert();
-					System.out.println(invoice.get("CNTBTCH") + " " + invoice.get("IDINVC") + " " + 
-					invoice.get("DATEINVC") + " " + invoice.get("DATEASOF") + " " +
-					invoice.get("IDCUST") + " " + invoice.get("NAMECUST") + " " + 
-					invoice.get("TEXTDESC") + " " + invoice.get("AMTINVCTOT"));
+				if ( true == customer.goNext()){
+					try{
+						//invoiceB.recordClear();
+						invoiceB.recordGenerate(RecordGenerateMode.Insert);
+						invoice.recordClear();
+						invoice.recordGenerate(RecordGenerateMode.Insert);
+						invoice.set("IDINVC", value);
+						invoice.set("IDCUST", id);
+						invoice.set("CODECURN", "CND");
+						invoice.process();
+						invoice.insert();
+						View invoice2 = new View(program, "AR0032");
+						System.out.println(invoice2.get("CNTBTCH") + " " + invoice2.get("IDINVC") + " " + 
+						invoice2.get("DATEINVC") + " " + invoice2.get("DATEASOF") + " " +
+						invoice2.get("IDCUST") + " " + invoice2.get("NAMECUST") + " " + 
+						invoice2.get("TEXTDESC") + " " + invoice2.get("AMTINVCTOT"));
+					}
+					 catch( Exception e )
+		            {
+		                count = program.getErrors().getCount();
+		                if ( 0 == count )
+		                {
+		                    e.printStackTrace();                   
+		                }
+		                for ( int i = 0; i < count; i++ )
+		                {
+		                    System.out.println(program.getErrors().get(i).getMessage());
+		                }
+		            }
 				}
-				 catch( Exception e )
-	            {
-	                count = program.getErrors().getCount();
-	                if ( 0 == count )
-	                {
-	                    e.printStackTrace();                   
-	                }
-	                for ( int i = 0; i < count; i++ )
-	                {
-	                    System.out.println(program.getErrors().get(i).getMessage());
-	                }
-	            }
 			}
 		}
 		invoice.dispose();
