@@ -11,11 +11,11 @@ public class InvoiceBatches {
 		int count = 0;
 		invoiceB.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoiceB.goNext()) {
-			System.out.println(invoiceB.get("IDTRX") + "\n");
+			return(System.out.println(invoiceB.getDefiningKeyValues() + "\n"));
 			count++;
 		}
 		System.out.println(count);
-		return true;
+		return null;
 	}
 
 }

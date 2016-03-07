@@ -31,8 +31,9 @@ public class Customers {
 		return true;	
 	}
 
-	public static void insertCustomer(Program program)
+	public static void insertCustomer(Program program, String id, String name)
 	{
-		//View customer =
+		View customer = new View(program, "AR0024");
 	}
 }
+k
