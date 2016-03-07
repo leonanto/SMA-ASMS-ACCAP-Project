@@ -20,9 +20,9 @@ public class Invoices {
 		invoice.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoice.goNext()) {
 			//returns customer id, batch number,
-			count++;
 			invoiceList.add(invoice.get("CNTBTCH")+ " " + invoice.get("CNTITEM") +
 					" " + invoice.get("IDCUST") +" " + invoice.get("IDINVC") + "\n");
+			count++;
 		}
 		System.out.println(count);
 		return invoiceList;
@@ -33,10 +33,17 @@ public class Invoices {
 		View invoiceB = new View(program, "AR0031");
 		View invoice = new View(program, "AR0032");
 		View invoiceD = new View(program, "AR0033");
-		invoice.compose(invoiceB, invoiceD);
+		View invoicePS = new View(program, "AR0034");
+		View invoiceOF = new View(program, "AR0402");
+		View invoiceDOF = new View(program, "AR0401");
+		invoiceB.compose(invoice);
+		invoice.compose(invoiceB, invoiceD, invoicePS, invoiceOF, null);
+		invoiceD.compose(invoice, invoiceB, invoiceDOF);
+		invoivePS.compose(invoice);
+		invoiceOF.compose(invoice)
 		int count = 0;
 		//invoices.filterSelect("", true, 1, View.FilterOrigin.FromStart);
-		while (invoice.goNext()) { 
+		while (invoice.goNext()){ 
 			if(invoice.get("CNTBTCH").equals(batch)){
 				return(invoice.getDefiningKeyValues());
 			}
@@ -68,7 +75,15 @@ public class Invoices {
 		View invoiceB = new View(program, "AR0031");
 		View invoice = new View(program, "AR0032");
 		View invoiceD = new View(program, "AR0033");
-		invoice.compose(invoiceB, invoiceD);
+		View invoicePS = new View(program, "AR0034");
+		View invoiceOF = new View(program, "AR0402");
+		View invoiceDOF = new View(program, "AR0401");
+		invoiceB.compose(invoice);
+		invoice.compose(invoiceB, invoiceD, invoicePS, invoiceOF, null);
+		invoiceD.compose(invoice, invoiceB, invoiceDOF);
+		invoivePS.compose(invoice);
+		invoiceOF.compose(invoice)
+		int count = 0;
 		invoice.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoice.goNext()) {
 			if(invoice.get("IDCUST").equals(id)){
