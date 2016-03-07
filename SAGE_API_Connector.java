@@ -27,6 +27,7 @@ public class SAGE_API_Connector {
 		//System.out.print(InvoiceDetails.getInvoiceDetails(program));
 		//Invoices.getRecordsInvoice(program);
 		Invoices.searchInvoices(program, 4,"00319-L");
+		Invoices.insertInvoices(program, "00319-L", 12345);
 	}
 	
 }

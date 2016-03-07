@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.sage.accpac.sm.Program;
 import com.sage.accpac.sm.View;
+import com.sage.accpac.sm.View.RecordGenerateMode;
 import com.sage.accpac.sm.view.IViewFields;
 
 public class Invoices {
@@ -15,7 +16,15 @@ public class Invoices {
 		View invoiceB = new View(program, "AR0031");
 		View invoice = new View(program, "AR0032");
 		View invoiceD = new View(program, "AR0033");
-		invoice.compose(invoiceB, invoiceD);
+		View invoicePS = new View(program, "AR0034");
+		View invoiceOF = new View(program, "AR0402");
+		View invoiceDOF = new View(program, "AR0401");
+		View customer = new View(program, "AR0024");
+		invoiceB.compose(invoice);
+		//invoice.compose(invoiceB, invoiceD, invoicePS, invoiceOF, null);
+		invoiceD.compose(invoice, invoiceB, invoiceDOF);
+		invoicePS.compose(invoice);
+		invoiceOF.compose(invoice);
 		int count = 0;
 		invoice.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoice.goNext()) {
@@ -40,8 +49,8 @@ public class Invoices {
 		invoiceB.compose(invoice);
 		invoice.compose(invoiceB, invoiceD, invoicePS, invoiceOF, null);
 		invoiceD.compose(invoice, invoiceB, invoiceDOF);
-		invoivePS.compose(invoice);
-		invoiceOF.compose(invoice)
+		invoicePS.compose(invoice);
+		invoiceOF.compose(invoice);
 		int count = 0;
 		//invoices.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoice.goNext()){ 
@@ -59,7 +68,7 @@ public class Invoices {
 		return null;
 	}
 
-	public static IViewFields getRecordsInvoice(Program program/*, String batch*/)
+	public static IViewFields getRecordsInvoice(Program program, String batch)
 	{
 		IViewFields def = null;
 		View invoiceB = new View(program, "AR0031");
@@ -67,9 +76,9 @@ public class Invoices {
 		View invoiceD = new View(program, "AR0033");
 		invoice.compose(invoiceB, invoiceD);
 		int count = 0;
-		invoices.filterSelect("", true, 1, View.FilterOrigin.FromStart);
+		invoice.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoice.goNext()) { 
-			if(invoices.get("CNTBTCH").equals(batch)){
+			if(invoice.get("CNTBTCH").equals(batch)){
 				return(invoice.getViewFields());
 			}
 		}
@@ -77,7 +86,7 @@ public class Invoices {
 		return def;
 	}
 
-	public static void insertInvoices(Program program, String id, String value)
+	public static void insertInvoices(Program program, String id, int value)
 	{
 		View invoiceB = new View(program, "AR0031");
 		View invoice = new View(program, "AR0032");
@@ -85,20 +94,41 @@ public class Invoices {
 		View invoicePS = new View(program, "AR0034");
 		View invoiceOF = new View(program, "AR0402");
 		View invoiceDOF = new View(program, "AR0401");
+		View cbalance = new View(program, "AR0160");
+		View customer = new View(program, "AR0024");
 		invoiceB.compose(invoice);
-		invoice.compose(invoiceB, invoiceD, invoicePS, invoiceOF, null);
+		invoice.compose(invoiceB, invoiceD, invoicePS, invoiceOF, cbalance);
 		invoiceD.compose(invoice, invoiceB, invoiceDOF);
-		invoivePS.compose(invoice);
+		invoicePS.compose(invoice);
 		invoiceOF.compose(invoice);
 		int count = 0;
-		invoice.filterSelect("", true, 1, View.FilterOrigin.FromStart);
-		while (invoice.goNext()) {
-			if(invoice.get("IDCUST").equals(id)){
-				invoice.set("IDINVC", value);
-				System.out.println(invoice.get("CNTBTCH") + " " + invoice.get("IDINVC") + " " + 
-				invoice.get("DATEINVC") + " " + invoice.get("DATEASOF") + " " +
-				invoice.get("IDCUST") + " " + invoice.get("NAMECUST") + " " + 
-				invoice.get("TEXTDESC") + " " + invoice.get("AMTINVCTOT"));
+		customer.filterSelect("", true, 1, View.FilterOrigin.FromStart);
+		while (customer.goNext()) {
+			if(customer.get("IDCUST").equals(id)){
+				try{
+					//invoice.recordClear();
+					//invoice.recordGenerate(RecordGenerateMode.NoInsert);
+					invoice.set("IDINVC", value);
+					//invoice.set("IDCUST", id);
+					invoice.process();
+					invoice.insert();
+					System.out.println(invoice.get("CNTBTCH") + " " + invoice.get("IDINVC") + " " + 
+					invoice.get("DATEINVC") + " " + invoice.get("DATEASOF") + " " +
+					invoice.get("IDCUST") + " " + invoice.get("NAMECUST") + " " + 
+					invoice.get("TEXTDESC") + " " + invoice.get("AMTINVCTOT"));
+				}
+				 catch( Exception e )
+	            {
+	                count = program.getErrors().getCount();
+	                if ( 0 == count )
+	                {
+	                    e.printStackTrace();                   
+	                }
+	                for ( int i = 0; i < count; i++ )
+	                {
+	                    System.out.println(program.getErrors().get(i).getMessage());
+	                }
+	            }
 			}
 		}
 		invoice.dispose();
@@ -158,7 +188,7 @@ public class Invoices {
 		return invoiceList;	
 	}
 	
-	public static boolean search(Program program, String id, String field){
+	public static String search(Program program, String id, String field){
 		View invoice = new View(program, "AR0032");
 		invoice.filterSelect("", true, 1, View.FilterOrigin.FromStart);
 		while (invoice.goNext()) {
@@ -169,7 +199,7 @@ public class Invoices {
 				invoice.get("TEXTDESC") + " " + invoice.get("AMTINVCTOT"));
 			}
 		}
-		return true;
+		return null;
 	}
 
 	public void processInvoice(Program program, String id){
@@ -182,14 +212,13 @@ public class Invoices {
 		invoiceB.compose(invoice);
 		invoice.compose(invoiceB, invoiceD, invoicePS, invoiceOF, null);
 		invoiceD.compose(invoice, invoiceB, invoiceDOF);
-		invoivePS.compose(invoice);
+		invoicePS.compose(invoice);
 		invoiceOF.compose(invoice);
-
 		while (invoice.goNext()){ 
 			if(invoice.get("IDCUST").equals(id)){
 				
 			}
-
+		}
 		invoice.process();
 		
 		invoice.dispose();

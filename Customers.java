@@ -36,4 +36,3 @@ public class Customers {
 		View customer = new View(program, "AR0024");
 	}
 }
-k
